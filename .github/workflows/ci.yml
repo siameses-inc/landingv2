@@ -1,0 +1,107 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  initial_setup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Specify your Node.js version
+      - name: Install pnpm
+        run: npm install -g pnpm
+      - name: Install dependencies
+        run: pnpm install
+      - name: Placeholder step
+        run: echo "Workflow setup complete. More jobs will be added here."
+
+  lint:
+    runs-on: ubuntu-latest
+    needs: initial_setup # Ensures lint runs after setup
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install pnpm
+        run: npm install -g pnpm
+      - name: Install dependencies
+        run: pnpm install
+      - name: Run linters
+        run: pnpm lint
+
+  format_check:
+    runs-on: ubuntu-latest
+    needs: initial_setup # Ensures format_check runs after setup
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install pnpm
+        run: npm install -g pnpm
+      - name: Install dependencies
+        run: pnpm install
+      - name: Run Prettier format check
+        run: pnpm prettier --check .
+
+  build:
+    runs-on: ubuntu-latest
+    needs: initial_setup # Ensures build runs after setup
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install pnpm
+        run: npm install -g pnpm
+      - name: Install dependencies
+        run: pnpm install
+      - name: Run build
+        run: pnpm build
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [lint, format_check, build] # Ensures deploy runs after lint, format_check, and build are successful
+    steps:
+      - name: Placeholder deployment step
+        run: echo "This is a placeholder for deployment. Add your deployment commands here."
+      # Add comments below this line explaining how to configure for different platforms
+      # For example:
+      # For Vercel, you might use the Vercel CLI or a GitHub Action for Vercel.
+      # - name: Deploy to Vercel
+      #   uses: amondnet/vercel-action@v20 # Example, check for the latest version
+      #   with:
+      #     vercel-token: ${{ secrets.VERCEL_TOKEN }}
+      #     vercel-org-id: ${{ secrets.ORG_ID }}
+      #     vercel-project-id: ${{ secrets.PROJECT_ID }}
+      #
+      # For AWS (e.g., S3/CloudFront), you might use AWS CLI commands:
+      # - name: Configure AWS Credentials
+      #   uses: aws-actions/configure-aws-credentials@v1
+      #   with:
+      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     aws-region: your-aws-region
+      # - name: Deploy to S3
+      #   run: aws s3 sync ./out s3://your-s3-bucket-name --delete
+      #
+      # For Netlify, you might use the Netlify CLI:
+      # - name: Deploy to Netlify
+      #   uses: nwtgck/actions-netlify@v1.2 # Example, check for the latest version
+      #   with:
+      #     publish-dir: './out'
+      #     production-branch: main
+      #   env:
+      #     NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+      #     NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
